@@ -1,4 +1,12 @@
-# CS180TeamProject
+# CommunityBulletinBoard
+Our project is to implement a CommunityBulletinBoard application. In Phase 1, we have implemented the following functionalities: creating new users, logging in existing users, searching and viewing users, and adding and deleting friends. Upcoming features include the ability to upload and save user images and direct messaging (the code for which is already completed). 
+
+**Instructions for running the code:**
+1. When running the program for the first time, ensure that "UserFile.txt" and "FriendFile.txt" exist and each contains only one blank line. 
+2. Then, run the main function in CommunityBulletinBoard and follow the prompts to complete user registration. 
+3. After registration, you can choose different options to perform corresponding functions. 
+4. For adding and removing friends, you need to search for the user's name (not username). If there are users with the corresponding name, they will all be displayed, and you can simply enter the name of the user you want to add. The same applies to removeFriend; enter the name of the friend you want to delete. 
+5. After the program finishes running, you can see the results of this run in "UserFile.txt" and "FriendFile.txt".
 
 
 
