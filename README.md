@@ -5,6 +5,7 @@
 # UserDatabase
 
 This class is responsible for storing information about all users. It is related to other classes in the sense that every time the `main` function of the `CommunityBulletinBoard` class is executed, a `UserDatabase` object is created and user information is loaded from two text files.
+Important Notes: Before running the program for the first time, please ensure that the "users.txt" and "friends.txt" files exist and contain only one line of blank space each.
 
 ## Fields
 
