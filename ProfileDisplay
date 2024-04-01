@@ -1,0 +1,124 @@
+/*import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+
+public class ProfileDisplay extends JFrame {
+   private JLabel profilePictureLabel;
+   private JButton uploadButton;
+
+    public ProfileDisplay() {
+            setTitle("Profile Picture Uploader");
+            setSize(400, 300);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setLayout(new BorderLayout());
+
+            profilePictureLabel = new JLabel();
+            profilePictureLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            add(profilePictureLabel, BorderLayout.CENTER);
+
+            uploadButton = new JButton("Upload Profile Picture");
+            uploadButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    JFileChooser fileChooser = new JFileChooser();
+                    FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif");
+                    fileChooser.setFileFilter(filter);
+                    int returnValue = fileChooser.showOpenDialog(null);
+                    if (returnValue == JFileChooser.APPROVE_OPTION) {
+                        File selectedFile = fileChooser.getSelectedFile();
+                        displayProfilePicture(selectedFile);
+                    }
+                }
+            });
+            add(uploadButton, BorderLayout.SOUTH);
+        }
+
+        private void displayProfilePicture(File file) {
+            try {
+                BufferedImage img = ImageIO.read(file);
+                Image scaledImg = img.getScaledInstance(200, 200, Image.SCALE_SMOOTH);
+                ImageIcon icon = new ImageIcon(scaledImg);
+                profilePictureLabel.setIcon(icon);
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error loading image: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        public static void main(String[] args) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    ProfileDisplay uploader = new ProfileDisplay();
+                    uploader.setVisible(true);
+                }
+            });
+        }
+    }*/
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Scanner;
+
+public class ProfileDisplay {
+    private static final String PROFILE_PICTURES_DIRECTORY = "profile_pictures";
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Welcome to Profile Picture Uploader");
+
+        while (true) {
+            System.out.println("\nMenu:");
+            System.out.println("1. Upload Profile Picture");
+            System.out.println("2. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    uploadProfilePicture(scanner);
+                    break;
+                case 2:
+                    System.out.println("Exiting...");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    private static void uploadProfilePicture(Scanner scanner) {
+        System.out.print("Enter path to the profile picture file: ");
+        String imagePath = scanner.next();
+
+        File imageFile = new File(imagePath);
+        if (!imageFile.exists()) {
+            System.out.println("File not found.");
+            return;
+        }
+        
+        File directory = new File(PROFILE_PICTURES_DIRECTORY);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+
+        String fileName = System.currentTimeMillis() + "_" + imageFile.getName();
+
+        try {
+            Path source = imageFile.toPath();
+            Path target = new File(PROFILE_PICTURES_DIRECTORY, fileName).toPath();
+            Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("Profile picture uploaded successfully. File path: " + target);
+        } catch (IOException e) {
+            System.out.println("Error uploading profile picture: " + e.getMessage());
+        }
+    }
+}
