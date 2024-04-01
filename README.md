@@ -67,3 +67,25 @@ This class is responsible for defining methods related to the user. It takes in 
 - 'public boolean login(String password)': Checks if a given password matches the user's password and then does a login attempt.
 - 'public String toString()': Returns a string representation of the user, including their name, username, and bio.
 
+
+# Direct Messaging
+
+We have followed a snapchat style approach for direct messaging, where users can send messages to other users which can be viewed upon recieving but not 
+stored in memory. A few methods in user class support this approach. Going forward, we plan to develop a class that implements DirectMessage Interface 
+with the use of Network IO to implement more features as described below. 
+
+## DirectMessage Interface
+We have created the interface, which will be further implemented in Phase 2 as part of Network IO incorporation. 
+
+-public boolean sendMssg(User sender, User receiver, String message): Sends a message from a user to a user. 
+
+-public boolean deleteMssg(User sender, User deleter, String message): Deletes a message that has already been sent by a user.
+
+-public boolean receiveMssg(User sender, User receiver, String message): Ensures that receiver has received the message.
+
+-public boolean blockMssg(User receiver, String message): Allows sender to block messages from another user. 
+
+-public boolean blockUser(User sender, User block): Allows sender to block a user. 
+
+-public boolean restrictMssg(User sender, User receiver): Restricts messages based on content or user. 
+
