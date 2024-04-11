@@ -9,7 +9,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
-import java.util.Map;
+
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,18 +18,16 @@ public class UserListFrame {
     private JTable table1;
     private JButton addButton;
     private JTextField selField;
-    private JButton selBtnButton;
+    private JButton searchButton;
     Object a[][];
-    Object name[] = {"","头像","姓名"};
+    Object name[] = {"","Icon","Username"};
     Set<String> userNameSets = new HashSet<>();
     User currentUser;
     JFrame frame;
     ConcurrentHashMap<String,User> users;
 
 
-
-
-    public void init(CustomModel mod, Map<String, User> users){
+    public void init(CustomModel mod, ConcurrentHashMap<String, User> users){
         int i = 0;
         a = new Object[users.size()][3];
         mod.setRowCount(0);
@@ -43,7 +41,7 @@ public class UserListFrame {
         }
     }
 
-    public void init(CustomModel mod, Map<String, User> users,String name){
+    public void init(CustomModel mod, ConcurrentHashMap<String, User> users,String name){
         int i = 0;
         a = new Object[users.size()][3];
         mod.setRowCount(0);
@@ -67,11 +65,11 @@ public class UserListFrame {
                 return false;
             } else {
                 if (table1.getValueAt(row, column).toString().equalsIgnoreCase("false")) {
-                    //如果被选中就放到set里
-                    System.out.println("被选中" + table1.getValueAt(row, 2));
+                    // If it's selected, put it in set
+                    System.out.println("Selected: " + table1.getValueAt(row, 2));
                     userNameSets.add(table1.getValueAt(row, 2).toString());
                 }else {
-                    System.out.println("被取消"+table1.getValueAt(row,2).toString());
+                    System.out.println("Cancelled: "+table1.getValueAt(row,2).toString());
                     userNameSets.remove(table1.getValueAt(row, 2).toString());
                 }
                 return true;
@@ -105,16 +103,16 @@ public class UserListFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-
                 if (userNameSets.size() == 0){
-
                     System.out.println("Please select one person!");
                     JOptionPane.showMessageDialog(root,"Please select one person!");
                 }else if (userNameSets.size() > 1){
                     JOptionPane.showMessageDialog(root,"Add up to one friend at a time!");
                 }else {
                     for (String name: userNameSets){
+                        setUsers();
                         JOptionPane.showMessageDialog(root, currentUser.addFriend(name));
+                        users.get(currentUser.getUsername()).addFriend(name);
                         FileUtil.setUser(users);
                         UserInterfaceFrame instance = UserInterfaceFrame.getInstance();
                         instance.flush();
@@ -124,7 +122,7 @@ public class UserListFrame {
             }
         });
 
-        selBtnButton.addActionListener(new ActionListener() {
+        searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String name = selField.getText();
@@ -133,6 +131,7 @@ public class UserListFrame {
         });
     }
 
-
-
+    public void setUsers() {
+        users =  FileUtil.getUsers();
+    }
 }

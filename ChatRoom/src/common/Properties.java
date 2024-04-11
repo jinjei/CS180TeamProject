@@ -1,11 +1,11 @@
 package common;
 
 public class Properties {
-    //头像宽高
+    //user's picture size
     public static int PROFILE_PICTURE_WIDE = 100;
-    public static int PROFILE_PICTURE_HIGH = 110;
+    public static int PROFILE_PICTURE_HIGH = 100;
 
-    //列表中图片宽高
+    //user's picture size in friend list
     public static int LIST_PICTURE_WIDE = 80;
-    public static int LIST_PICTURE_HIGH = 90;
+    public static int LIST_PICTURE_HIGH = 80;
 }

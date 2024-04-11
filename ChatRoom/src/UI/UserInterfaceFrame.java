@@ -2,8 +2,6 @@ package UI;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -21,10 +19,10 @@ public class UserInterfaceFrame {
     private JPanel panel1;
     private JPanel p1;
     private JButton sendBtn;
-    private JButton setBtn;
+    private JButton setPicButton;
     private JLabel uNameLab;
     private JLabel uImgLab;
-    private JButton addBtn;
+    private JButton addButton;
     private JTable table1;
     private JButton removeFriendButton;
     private JButton blockButton;
@@ -35,7 +33,7 @@ public class UserInterfaceFrame {
     private JTextArea allChatMsg;
     private JButton sendAllBtn;
     private JTextArea textAllMsg;
-    private JButton refreshedButton;
+    private JButton refreshButton;
     private JLabel fImgLab;
     private JLabel fName;
     private JLabel fImg2;
@@ -46,13 +44,13 @@ public class UserInterfaceFrame {
 
     private ConcurrentHashMap<String,User> users = new ConcurrentHashMap<>();
     Object a[][];
-    Object name[] = {"","icon","name"};
+    Object name[] = {"","Icon","Username"};
     Set<String> userNameSets = new HashSet<>();
     User currentUser;
     UserClientService userClientService;
     CustomModel mod;
     private UserInterfaceFrame(){
-        addBtn.addActionListener(new ActionListener() {
+        addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 new UserListFrame(users,currentUser);
@@ -64,7 +62,7 @@ public class UserInterfaceFrame {
                 new BlockListFrame(users,currentUser);
             }
         });
-        refreshedButton.addActionListener(new ActionListener() {
+        refreshButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 users = FileUtil.getUsers();
@@ -72,31 +70,15 @@ public class UserInterfaceFrame {
         });
     }
 
-
-
-
-    //设置列宽随表格内容自动调整
-    public void fitTableColumns(JTable myTable) { // 設置table的列寬隨內容調整
-        JTableHeader header = myTable.getTableHeader();
-        int rowCount = myTable.getRowCount();
-        Enumeration columns = myTable.getColumnModel().getColumns();
-        while (columns.hasMoreElements()) {
-            TableColumn column = (TableColumn) columns.nextElement();
-            int col = header.getColumnModel().getColumnIndex(column.getIdentifier());
-
-            int width = (int) myTable.getTableHeader().getDefaultRenderer()
-                    .getTableCellRendererComponent(myTable, column.getIdentifier(), false, false, -1, col)
-                    .getPreferredSize().getWidth();
-            for (int row = 0; row < rowCount; row++) {
-                int preferedWidth = (int) myTable.getCellRenderer(row, col)
-                        .getTableCellRendererComponent(myTable, myTable.getValueAt(row, col), false, false, row, col)
-                        .getPreferredSize().getWidth();
-                width = Math.max(width, preferedWidth);
-            }
-            header.setResizingColumn(column);
-            column.setWidth(width + myTable.getIntercellSpacing().width);
-        }
+    public User getCurrentUser() {
+        return currentUser;
     }
+
+    public ConcurrentHashMap<String, User> getUsers() {
+        return users;
+    }
+
+
     public void flush(){
         init(mod,users);
     }
@@ -124,11 +106,11 @@ public class UserInterfaceFrame {
                 return false;
             } else {
                 if (table1.getValueAt(row, column).toString().equalsIgnoreCase("false")) {
-                    //如果被选中就放到set里
-                    System.out.println("被选中" + table1.getValueAt(row, 2));
+                    // If it's selected, put it in set
+                    System.out.println("Selected: " + table1.getValueAt(row, 2));
                     userNameSets.add(table1.getValueAt(row, 2).toString());
                 }else {
-                    System.out.println("被取消"+table1.getValueAt(row,2).toString());
+                    System.out.println("Cancelled: "+table1.getValueAt(row,2).toString());
                     userNameSets.remove(table1.getValueAt(row, 2).toString());
                 }
                 return true;
@@ -140,11 +122,7 @@ public class UserInterfaceFrame {
         }
     }
 
-/*    public static void main(String[] args) {
 
-        new UserInterfaceFrame();
-
-    }*/
     public void setMsg(String msg){
         chatMsg.setText(msg);
     }
@@ -172,16 +150,6 @@ public class UserInterfaceFrame {
         users = list;
         System.out.println(users.size());
         this.currentUser =currentUser;
-/*        ImageIcon icon2=new ImageIcon("D:\\imgs\\jzh.jpg");
-        icon2.setImage(icon2.getImage().getScaledInstance(properties.Properties.PROFILE_PICTURE_WIDE,properties.Properties.PROFILE_PICTURE_HIGH,1));
-        ImageIcon icon3=new ImageIcon("D:\\imgs\\jzb.png");
-        icon3.setImage(icon3.getImage().getScaledInstance(properties.Properties.PROFILE_PICTURE_WIDE,properties.Properties.PROFILE_PICTURE_HIGH,1));
-        JLabel jLabel2 = new JLabel();
-        jLabel2.setIcon(icon2);
-        JLabel jLabel3 = new JLabel();
-        jLabel3.setIcon(icon3);
-        users.add(new User("简自豪",icon2));
-        users.add(new User("简自悲",icon3));*/
 
         mod= new CustomModel();
         for (Object o: name){
@@ -190,9 +158,11 @@ public class UserInterfaceFrame {
         init(mod,users);
         table1.setModel(mod);
         table1.setRowHeight(80);
+        //fitTableColumns(table1);
         frame = new JFrame("UserInterfaceFrame");
         frame.setContentPane(this.panel1);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //frame.pack();
         frame.setSize(800,500);
         frame.setVisible(true);
 
@@ -200,16 +170,16 @@ public class UserInterfaceFrame {
         uNameLab.setText(currentUser.getUsername());
         FrameUtil.center(frame);
 
-        setBtn.addActionListener(new ActionListener() {
+        setPicButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                users = FileUtil.getUsers();
                 JFileChooser fileChooser = new JFileChooser();
                 int result = fileChooser.showOpenDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-                    System.out.println("选择的文件路径：" + filePath);
+                    System.out.println("Selected file path：" + filePath);
                     currentUser.setBio(new ImageIcon(filePath));
-                    //currentUser.setUsername("简自悲");
                     FileUtil.setUser(users);
                     users = FileUtil.getUsers();
                     uImgLab.setIcon(currentUser.getBio());
@@ -222,6 +192,7 @@ public class UserInterfaceFrame {
         removeFriendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                users = FileUtil.getUsers();
                 if (userNameSets.size() > 0){
                     JOptionPane.showMessageDialog(p1,"success!");
                 }else {
@@ -229,13 +200,12 @@ public class UserInterfaceFrame {
                 }
                 for (String name : userNameSets){
                     currentUser.removeFriend(name);
+                    users.get(currentUser.getUsername()).removeFriend(name);
                     userNameSets.clear();
-                    users = FileUtil.getUsers();
                     FileUtil.setUser(users);
+                    users = FileUtil.getUsers();
                     init(mod,users);
                 }
-
-
 
             }
         });
@@ -250,6 +220,8 @@ public class UserInterfaceFrame {
                     JOptionPane.showMessageDialog(p1,"Please select at least one row of data!");
                 }
                 for (String name : userNameSets){
+                    users = FileUtil.getUsers();
+                    users.get(currentUser.getUsername()).blockUser(name);
                     currentUser.blockUser(name);
                     FileUtil.setUser(users);
                     init(mod,users);
@@ -278,20 +250,22 @@ public class UserInterfaceFrame {
         sendBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                flushUsers();
+                users = FileUtil.getUsers();
                 if (userNameSets.size() > 1){
                     JOptionPane.showMessageDialog(p1,"Only one person can be sent a private message at a time!");
                 }else if (userNameSets.size() ==0){
                     JOptionPane.showMessageDialog(p1,"Please select at least one person's private message!");
                 }else {
                     for (String name : userNameSets){
-
+                        System.out.println("Send message to: "+ name);
+                        System.out.println(name);
+                        System.out.println(users.get(name).getBlockedUsers());
                         if (users.get(name).isBlockedBy(currentUser.getUsername())){
-                            JOptionPane.showMessageDialog(p1,"You have been blocked by him and cannot send messages to him!");
+                            JOptionPane.showMessageDialog(p1,"You have been blocked by this user!");
                         }else {
 
                             strBuf.append(currentUser.getUsername()+" said to "+name+ " :\n"+textMsg.getText()+"\n");
-                            userClientService.Send(name,currentUser.getUsername()+" said to"+name+ ":\n"+textMsg.getText()+"\n");
+                            userClientService.Send(name,currentUser.getUsername()+" said to "+name+ ":\n"+textMsg.getText()+"\n");
                             chatMsg.setText(strBuf.toString());
                             textMsg.setText("");
                         }
@@ -306,24 +280,15 @@ public class UserInterfaceFrame {
         sendAllBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                flushUsers();
                 strAllBuf.append(currentUser.getUsername()+"said to all:\n"+textAllMsg.getText()+"\n");
                 userClientService.sendAll(currentUser.getUsername()+" said to all:\n"+textAllMsg.getText()+"\n");
                 allChatMsg.setText(strAllBuf.toString());
                 textAllMsg.setText("");
-
-
-
-
 
             }
 
         });
     }
 
-    public void flushUsers(){
-        users = FileUtil.getUsers();
-    }
 
-    //
 }

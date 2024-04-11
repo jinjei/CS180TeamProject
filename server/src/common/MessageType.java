@@ -1,11 +1,12 @@
 package common;
+
 public interface MessageType {
-    String MESSAGE_LOGIN_SUCCESS="1"; //登录成功
-    String MESSAGE_LOGIN_FAIL="2"; //登录失败
-    String MESSAGE_COMM_MES="3";//普通信息包
-    String MESSAGE_GET_ONLINE_FRIEND="4"; //得到在线用户列表
-    String MESSAGE_RET_ONLINE_FRIEND="5";//返回在线用户列表
-    String MESSAGE_CLIENT_EXIT="6"; //客户请求退出
-    String MESSAGE_CLIENT_NO_EXIST="7"; //发送目标不存在
-    String MESSAGE_CLIENT_OFFLINE="8"; //发送目标不在线
+    String MESSAGE_LOGIN_SUCCESS="1"; //login success
+    String MESSAGE_LOGIN_FAIL="2"; //login failure
+    String MESSAGE_COMM_MES="3";//common message
+    String MESSAGE_GET_ONLINE_FRIEND="4"; //get online user list
+    String MESSAGE_RET_ONLINE_FRIEND="5";//return online user list
+    String MESSAGE_CLIENT_EXIT="6"; //client request exit
+    String MESSAGE_CLIENT_NO_EXIST="7"; //receiver of the message does not exist
+    String MESSAGE_CLIENT_OFFLINE="8"; //receiver of the message is offline
 }

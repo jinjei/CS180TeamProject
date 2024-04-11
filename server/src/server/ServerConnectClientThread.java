@@ -3,23 +3,26 @@ package server;
 
 import common.Message;
 import common.MessageType;
-import common.User;
-import main.QQServer;
+import main.AppServer;
 
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
- * 该类的一个对象和某个客户端保持通讯
+ * Team Project(Project 05) -- ServerConnectClientThread
+ * <p>
+ * An object of this class communicates with a specific client
+ *
+ * @author Lab01, Team 4
+ * @version Apr 10, 2024
  */
 public class ServerConnectClientThread extends Thread {
-    private Socket socket; //这个线程对应的Socket
-    private String userId; //对应客户的ID
-    private boolean flag = true; //是否结束线程的标志
-    private ObjectInputStream ois; //输入流
-    private ObjectOutputStream oos; //输出流
+    private Socket socket; //socket corresponding to the current user
+    private String userId;
+    private boolean flag = true; //Indicates whether the login is successful
+    private ObjectInputStream ois;
+    private ObjectOutputStream oos;
 
     public ServerConnectClientThread(Socket socket, String userId) {
         this.socket = socket;
@@ -28,7 +31,7 @@ public class ServerConnectClientThread extends Thread {
 
     @Override
     public void run() {
-        System.out.println("服务器与客户【" + userId + "】保持通信……");
+        System.out.println("User [" + userId + "] connected with server……");
         while (flag) {
             try {
                 ois = new ObjectInputStream(socket.getInputStream());
@@ -44,46 +47,49 @@ public class ServerConnectClientThread extends Thread {
         try {
             switch (message.getMessageType()) {
                 case MessageType.MESSAGE_GET_ONLINE_FRIEND:
-                    //对方请求列表
-                    System.out.println("【" + message.getSender() + "】要看在线用户列表……");
+
+                    System.out.println("User [" + message.getSender() + "] wants see the online users list……");
                     Message message1 = new Message();
                     message1.setMessageType(MessageType.MESSAGE_RET_ONLINE_FRIEND);
-                    message1.setGetter(message.getSender());//发送者变接受者
-                    //消息内容为找到的内容
+                    message1.setGetter(message.getSender());//Set the receiver to the person
+                                                            // who just sent the request
+
                     message1.setContent(ManageServerConnectClientThread.getOnlineFriends());
                     oos = new ObjectOutputStream(socket.getOutputStream());
                     oos.writeObject(message1);
                     break;
                 case MessageType.MESSAGE_CLIENT_EXIT:
+                    flag = false; //A sign indicating the end of this thread
+
+                    //Delete this client from the thread collection
                     ManageServerConnectClientThread.deleteSocket(userId);
-                    flag = false; //此线程结束的标志
-                    ManageServerConnectClientThread.deleteSocket(userId); //从线程集合中除名
-                    socket.close(); //将这个Socket移除
-                    System.out.println("用户【" + userId + "】断开连接！");
+                    socket.close(); //Close the thread corresponding to the client
+                    System.out.println("User [" + userId + "] disconnected！");
                     break;
                 case MessageType.MESSAGE_COMM_MES:
                     if (message.getGetter().equals("All")) {
-                        //说明这是群发消息
+                        //It's a message to all users
                         ManageServerConnectClientThread.sendAll(socket, oos, message);
                         break;
                     }
                     //得到目标的Socket
                     Socket socket = ManageServerConnectClientThread.getSocketById(message.getGetter());
                     Message message2 = new Message();
-                    if (QQServer.isUser(message.getGetter())) {//看此用户是否在数据库中
-                        //注册的用户里有这号人
+                    if (AppServer.isUser(message.getGetter())) {//Check if the user is in the database
+
+                        //This user is in the database
                         if (socket == null) {
-                            //发回原处，告知当前用户离线，已经留言
+                            //Indicating that the receiver is offline and has left a message
                             socket = this.socket;
                             message2.setMessageType(MessageType.MESSAGE_CLIENT_OFFLINE);
                             message2.setGetter(message.getGetter());
-                            //把消息放进消息盒
+                            //Put the message in the pending message box
                             ManageServerConnectClientThread.addMessage(message.getGetter(), message);
                         } else {
                             message2 = message;
                         }
                     } else {
-                        //数据库的用户里没有这号人
+                        //This user not in the database
                         socket = this.socket;
                         message2.setMessageType(MessageType.MESSAGE_CLIENT_NO_EXIST);
                         message2.setGetter(message.getGetter());
@@ -93,7 +99,7 @@ public class ServerConnectClientThread extends Thread {
                     break;
             }
         } catch (Exception e) {
-            System.out.println("出现异常！");
+            System.out.println("Something went wrong！");
         }
 
     }

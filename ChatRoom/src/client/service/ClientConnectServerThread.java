@@ -8,7 +8,7 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 
 public class ClientConnectServerThread extends Thread {
-    //该线程需要持有Socket对象
+    // The thread needs to have a socket
     private Socket socket;
     private String userId;
     private ObjectInputStream ois;
@@ -22,15 +22,15 @@ public class ClientConnectServerThread extends Thread {
 
     @Override
     public void run() {
-        //后台Socket服务器要一直保持通讯
+        //The client must always keep connecting with the server
         while (true) {
             try {
                 ois = new ObjectInputStream(socket.getInputStream());
-                //如果在流中没有读取到这一对象，则会停顿在此处
+                // If the input is not read in the stream, it pauses here
                 Message message = (Message) ois.readObject();
-                actionByMessageType(message);//根据收到的消息类型做出反应
+                actionByMessageType(message); // React according to the MessageType received
             } catch (Exception e) {
-                /*e.printStackTrace();*/
+                e.printStackTrace();
             }
         }
     }
@@ -38,15 +38,17 @@ public class ClientConnectServerThread extends Thread {
     public void actionByMessageType(Message message) {
         switch (message.getMessageType()) {
             case MessageType.MESSAGE_RET_ONLINE_FRIEND:
-                //客户收到服务器的返回信息，信息内容就是在线人数
+                //The client receives a return message from the server,
+                //the message content is the list of online users
                 String[] split = message.getContent().split(" ");
-                System.out.println("在线用户如下：");
+                System.out.println("Online Users：");
                 for (String name : split) {
-                    System.out.println("用户：" + name);
+                    System.out.println("Name：" + name);
                 }
                 break;
             case MessageType.MESSAGE_COMM_MES:
-                //收到普通消息，提出内容、发送者、发送时间打印在控制台
+                //Received a common message,
+                //and print the content, sender, and sending time in the console
                 System.out.println(message.getSendTime());
                 if (message.getGetter().equals("All")) {
 
@@ -54,25 +56,25 @@ public class ClientConnectServerThread extends Thread {
                     strBuf.append(message.getContent());
                     System.out.println(strBuf.toString());
                     frame.setAllMsg(strBuf.toString());
-                    //说明这是群发消息
-                    System.out.println("【" + message.getSender() + "】对【所有人】说：");
+                    // This is a message to all users
+                    System.out.println("[" + message.getSender() + "] said to [All]：");
                 } else {
                     StringBuffer strBuf = frame.getStrBuf();
                     strBuf.append(message.getContent());
                     System.out.println(strBuf.toString());
                     frame.setMsg(strBuf.toString());
 
-                    System.out.println("【" + message.getSender() + "】对【我】说：");
+                    System.out.println("[" + message.getSender() + "] said to [Me]：");
 
                 }
-                System.out.print(message.getContent() + "\n\n请输入你的选择：");
+                //System.out.print(message.getContent() + "\n\nType your choice：");
                 break;
             case MessageType.MESSAGE_CLIENT_NO_EXIST:
-                //私聊目标不存在
-                System.out.println("客户【" + message.getGetter() + "】不存在，无法发送！");
+                // User doesn't exist
+                System.out.println("User [" + message.getGetter() + "] doesn't exist, cannot sent message！");
                 break;
             case MessageType.MESSAGE_CLIENT_OFFLINE:
-                System.out.println("客户【" + message.getGetter() + "】不在线，其在线后会收到消息！");
+                System.out.println("User [" + message.getGetter() + "] is offline now.");
         }
 
     }

@@ -13,12 +13,12 @@ import java.util.List;
  * and methods related to direct message
  *
  * @author Lab01, Team 4
- * @version Apr 1, 2024
+ * @version Apr 10, 2024
  */
 public class User implements Serializable {
     private static final long serialVersionUID=1L;
-    private String userId; //用户ID
-    private String passwd; //用户密码
+    private String userId;
+    private String passwd; //password
     private String name;
     private String username;
     private String password;
@@ -132,6 +132,7 @@ public class User implements Serializable {
         if (Friend(userToBlock)) {
             friends.remove(userToBlock);
         }
+        if (!blockedUsers.contains(userToBlock))
         blockedUsers.add(userToBlock);
         System.out.println(userToBlock + " has been blocked.");
         return userToBlock + " has been blocked.";
@@ -139,7 +140,10 @@ public class User implements Serializable {
 
     public String unblockUser(String userToUnblock) {
         blockedUsers.remove(userToUnblock);
-        friends.add(userToUnblock);
+        if (!friends.contains(userToUnblock)){
+            friends.add(userToUnblock);
+        }
+
         System.out.println(userToUnblock + " has been unblocked.");
         return userToUnblock + " has been unblocked.";
     }
@@ -249,7 +253,20 @@ public class User implements Serializable {
         return (password.equals(this.password));
     }
 
+
+    @Override
     public String toString() {
-        return "name: " + name + '/' + "userName: " + username + '/' + "bio: " + bio;
+        return "User{" +
+                "userId='" + userId + '\'' +
+                ", passwd='" + passwd + '\'' +
+                ", name='" + name + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", bio=" + bio +
+                ", email='" + email + '\'' +
+                ", blockedUsers=" + blockedUsers +
+                ", inbox=" + inbox +
+                ", friends=" + friends +
+                '}';
     }
 }

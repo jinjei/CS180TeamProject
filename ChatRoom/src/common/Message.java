@@ -3,12 +3,12 @@ package common;
 import java.io.Serializable;
 
 public class Message implements Serializable {
-    private static final long serialVersionUID=1L; //版本兼容标志
-    private String sender; //发送者
-    private String getter; //接收者
-    private String content; //内容
-    private String sendTime; //发送时间
-    private String messageType; //消息类型
+    private static final long serialVersionUID = 1L; //Version compatibility mark
+    private String sender;
+    private String getter; //receiver
+    private String content;
+    private String sendTime;
+    private String messageType;
 
     public Message(String sender, String messageType) {
         this.sender = sender;

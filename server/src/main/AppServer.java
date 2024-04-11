@@ -14,30 +14,32 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class QQServer {
+public class AppServer {
     ServerSocket serverSocket;
-    //模拟用户数据库
+
+    // userMap: database for the whole project
     private static ConcurrentHashMap<String, User> userMap =  FileUtil.getUsers();
 
-
     public static void main(String[] args) {
-        System.out.println(userMap.size());
-        new QQServer();
+        System.out.println("Total User Number: "+ userMap.size());
+        new AppServer();
     }
-    public QQServer() {
+    public AppServer() {
         try {
-            System.out.println("在9999端口监听……");
+            System.out.println("Listening on port 9999……");
             serverSocket = new ServerSocket(9999);
             while (true) {
                 Socket socket = serverSocket.accept();
                 ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
                 ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
                 User user = (User) ois.readObject();
-                System.out.println("看看");
+                System.out.println("Verify");
                 System.out.println(user);
-                //构建一个Message对象，准备回复
+
+                //construct a message object, ready for reply
                 Message message = new Message();
-                //验证账号密码是否正确
+
+                //verify username and password
                 if (isUser(user.getUsername(), user.getPassword())) {
 
                     message.setMessageType(MessageType.MESSAGE_LOGIN_SUCCESS);
@@ -68,15 +70,17 @@ public class QQServer {
         return userMap;
     }
 
+    //two ways of user verification
     public boolean isUser(String userId, String pw) {
         userMap = FileUtil.getUsers();
-        System.out.println("用户名"+userId+ "密码"+pw);
+        System.out.println("userID "+userId+ " Password "+pw);
         User user = userMap.get(userId);
-        //没有这个用户
+        //user doesn't exist
         if (user == null) {
             return false;
         }
-        //密码不正确
+
+        //password is incorrect
         System.out.println(user);
         if (!user.getPassword().equals(pw)) {
             return false;

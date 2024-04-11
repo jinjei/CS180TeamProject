@@ -2,28 +2,36 @@ package util;
 
 import javax.swing.*;
 import java.awt.*;
-
-//窗口工具类
+/**
+ * Team Project(Project 05) -- User
+ * <p>
+ * This class makes each GUI frame to be created
+ * in the center of the screen by default
+ *
+ * @author Lab01, Team 4
+ * @version Apr 10, 2024
+ */
 public class FrameUtil {
-    //居中
+    //center
     public static JFrame center(JFrame jFrame){
 
-        // 1、获取窗体的宽和高
+        // 1.Get the width and height of the frame
         int widthFrame = jFrame.getWidth();
         int heightFrame = jFrame.getHeight();
-        // 2、获取屏幕的宽和高
+        // 2.Get the width and height of the screen
         Toolkit defaultToolkit = Toolkit.getDefaultToolkit();
         Dimension screenSize = defaultToolkit.getScreenSize();
         double widthScreen = screenSize.getWidth();
         double heightScreen = screenSize.getHeight();
-        // 3、如果窗体的尺寸超过了，则直接用屏幕的尺寸
+        // 3.If the frame's size exceeds the screen,
+        // then use the screen's size
         if (widthFrame > widthScreen){
             widthFrame = (int)widthScreen;
         }
         if (heightFrame > heightScreen){
             heightFrame = (int)heightScreen;
         }
-        // 4、设置位置
+        // 4.Set position
         int positionX = (int) ((widthScreen - widthFrame)/2);
         int positionY = (int)((heightScreen - heightFrame)/2);
 
@@ -33,4 +41,3 @@ public class FrameUtil {
         return jFrame;
     }
 }
-

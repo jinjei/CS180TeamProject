@@ -9,7 +9,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,7 +18,7 @@ public class BlockListFrame {
     private JTable table1;
 
     Object a[][];
-    Object name[] = {"","icon","name"};
+    Object name[] = {"","Icon","Username"};
     Set<String> userNameSets = new HashSet<>();
     User currentUser;
     JFrame frame;
@@ -28,7 +27,7 @@ public class BlockListFrame {
 
 
 
-    public void init(CustomModel mod, Map<String, User> users){
+    public void init(CustomModel mod, ConcurrentHashMap<String, User> users){
         int i = 0;
         a = new Object[users.size()][3];
         mod.setRowCount(0);
@@ -98,8 +97,9 @@ public class BlockListFrame {
                     JOptionPane.showMessageDialog(root,"Only one can be removed at a time!");
                 }else {
                     for (String name: userNameSets){
-
-                        JOptionPane.showMessageDialog(root, currentUser.unblockUser(name));
+                        setUsers();
+                        currentUser.unblockUser(name);
+                        JOptionPane.showMessageDialog(root, users.get(currentUser.getUsername()).unblockUser(name));
                         FileUtil.setUser(users);
                         UserInterfaceFrame instance = UserInterfaceFrame.getInstance();
                         instance.flush();
@@ -111,5 +111,7 @@ public class BlockListFrame {
         });
     }
 
-
+    public void setUsers() {
+        this.users = FileUtil.getUsers();
+    }
 }

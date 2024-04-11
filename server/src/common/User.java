@@ -13,18 +13,17 @@ import java.util.List;
  * and methods related to direct message
  *
  * @author Lab01, Team 4
- * @version Apr 1, 2024
+ * @version Apr 10, 2024
  */
 public class User implements Serializable {
     private static final long serialVersionUID=1L;
-    private String userId; //用户ID
-    private String passwd; //用户密码
+    private String userId;
+    private String passwd; //password
     private String name;
     private String username;
     private String password;
     private ImageIcon bio;
     private String email;
-/*    private String[] friends;*/
     private List<String> blockedUsers ;
     private List<String> inbox ;
     private List<String> friends;
@@ -40,7 +39,7 @@ public class User implements Serializable {
         this.friends = new ArrayList<>();
     }
 
-    public void  setUser(String name, String username, String password,String email ) {
+    public void setUser(String name, String username, String password,String email ) {
         this.blockedUsers = new ArrayList<>();
         this.friends = new ArrayList<>();
         this.name = name;
@@ -89,7 +88,7 @@ public class User implements Serializable {
 
     public void setBio(ImageIcon bio) {
         this.bio = bio;
-      //  bio.setImage(bio.getImage().getScaledInstance(Properties.PROFILE_PICTURE_WIDE, Properties.PROFILE_PICTURE_HIGH,1));
+      // bio.setImage(bio.getImage().getScaledInstance(Properties.PROFILE_PICTURE_WIDE, Properties.PROFILE_PICTURE_HIGH,1));
 
     }
 
