@@ -15,7 +15,11 @@ import java.util.List;
  * @author Lab01, Team 4
  * @version Apr 10, 2024
  */
+<<<<<<< HEAD
 public class User implements Serializable, UserInterface {
+=======
+public class User implements Serializable {
+>>>>>>> b3fbe81551c82484992097fdbd41c2e2a42e30c4
     private static final long serialVersionUID=1L;
     private String userId;
     private String passwd; //password
@@ -98,9 +102,12 @@ public class User implements Serializable, UserInterface {
         return bio;
     }
 
+<<<<<<< HEAD
 
 
 
+=======
+>>>>>>> b3fbe81551c82484992097fdbd41c2e2a42e30c4
     public void setBio(ImageIcon bio) {
         this.bio = bio;
         bio.setImage(bio.getImage().getScaledInstance(Properties.PROFILE_PICTURE_WIDE, Properties.PROFILE_PICTURE_HIGH,1));
