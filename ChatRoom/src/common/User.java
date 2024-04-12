@@ -15,7 +15,7 @@ import java.util.List;
  * @author Lab01, Team 4
  * @version Apr 10, 2024
  */
-public class User implements Serializable {
+public class User implements Serializable, UserInterface {
     private static final long serialVersionUID=1L;
     private String userId;
     private String passwd; //password
@@ -97,6 +97,9 @@ public class User implements Serializable {
     public Icon getBio() {
         return bio;
     }
+
+
+
 
     public void setBio(ImageIcon bio) {
         this.bio = bio;

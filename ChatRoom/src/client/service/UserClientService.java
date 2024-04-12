@@ -85,27 +85,14 @@ public class UserClientService {
     //Send private message with other user
     public void Send(String name, String contents) {
         try {
-            UserInterfaceFrame instance = UserInterfaceFrame.getInstance();
-            User currentUser = instance.getCurrentUser();
-            ConcurrentHashMap<String, User> users = instance.getUsers();
-            System.out.println("Try this");
-            System.out.println(currentUser.getBlockedUsers());
-            User recipientUsers = users.get(name);
-            System.out.println("The block list of the message receiver:");
-            System.out.println(recipientUsers.getBlockedUsers());
-            if (recipientUsers.isBlockedBy(currentUser.getUsername())){
-                System.out.println("Blocked");
-            }else {
-                Message message1 = new Message();
-                message1.setMessageType(MessageType.MESSAGE_COMM_MES);//This is a common message
-                message1.setGetter(name);//receiver
-                message1.setContent(contents);
-                message1.setSender(user.getUserId());
-                message1.setSendTime(formatTime());
-                oos = new ObjectOutputStream(socket.getOutputStream());
-                oos.writeObject(message1);
-            }
-
+            Message message1 = new Message();
+            message1.setMessageType(MessageType.MESSAGE_COMM_MES);//This is a common message
+            message1.setGetter(name);//receiver of the message
+            message1.setContent(contents);
+            message1.setSender(user.getUserId());
+            message1.setSendTime(formatTime());
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            oos.writeObject(message1);
         } catch (IOException e) {
             e.printStackTrace();
         }
