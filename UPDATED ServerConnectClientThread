@@ -1,0 +1,105 @@
+package server;
+
+import common.Message;
+import common.MessageType;
+import main.AppServer;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+
+/**
+ * Team Project(Project 05) -- ServerConnectClientThread
+ * <p>
+ * An object of this class communicates with a specific client
+ *
+ * @version Apr 10, 2024
+ */
+public class ServerConnectClientThread extends Thread {
+    private Socket socket; //socket corresponding to the current user
+    private String userId;
+    private boolean flag = true; //Indicates whether the login is successful
+    private ObjectInputStream ois;
+    private ObjectOutputStream oos;
+
+    public ServerConnectClientThread(Socket socket, String userId) {
+        this.socket = socket;
+        this.userId = userId;
+    }
+
+    @Override
+    public void run() {
+        System.out.println("User [" + userId + "] connected with server……");
+        while (flag) {
+            try {
+                ois = new ObjectInputStream(socket.getInputStream());
+                Message message = (Message) ois.readObject();
+                actionByMessageType(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void actionByMessageType(Message message) {
+        try {
+            switch (message.getMessageType()) {
+                case MessageType.MESSAGE_GET_ONLINE_FRIEND:
+                    System.out.println("User [" + message.getSender() + "] wants to see the online users list……");
+                    Message response = new Message();
+                    response.setMessageType(MessageType.MESSAGE_RET_ONLINE_FRIEND);
+                    response.setGetter(message.getSender()); // Set the receiver to the person who just sent the request
+                    response.setContent(ManageServerConnectClientThread.getOnlineFriends());
+                    oos = new ObjectOutputStream(socket.getOutputStream());
+                    oos.writeObject(response);
+                    break;
+                case MessageType.MESSAGE_CLIENT_EXIT:
+                    flag = false; // A sign indicating the end of this thread
+                    ManageServerConnectClientThread.deleteSocket(userId); // Delete this client from the thread collection
+                    socket.close(); // Close the thread corresponding to the client
+                    System.out.println("User [" + userId + "] disconnected！");
+                    break;
+                case MessageType.MESSAGE_COMM_MES:
+                    handleCommunicationMessage(message);
+                    break;
+                case MessageType.MESSAGE_DELETE_MES:
+                    // Assume the content of the message includes identification of the message to be deleted
+                    ManageServerConnectClientThread.deleteMessage(message.getGetter(), message);
+                    System.out.println("The message deleted for the user [" + message.getGetter() + "]");
+                    break;
+            }
+        } catch (Exception e) {
+            System.out.println("Oops! Something went wrong！");
+        }
+    }
+
+    private void handleCommunicationMessage(Message message) throws IOException {
+        if (message.getGetter().equals("All")) {
+            // It's a message to all users
+            ManageServerConnectClientThread.sendAll(socket, oos, message);
+        } else {
+            Socket targetSocket = ManageServerConnectClientThread.getSocketById(message.getGetter());
+            Message forwardMessage = new Message();
+            if (AppServer.isUser(message.getGetter())) { // Check if the user is in the database
+                if (targetSocket == null) { // Receiver is offline
+                    forwardMessage.setMessageType(MessageType.MESSAGE_CLIENT_OFFLINE);
+                    forwardMessage.setGetter(message.getGetter());
+                    ManageServerConnectClientThread.addMessage(message.getGetter(), message);
+                } else {
+                    forwardMessage = message;
+                }
+            } else { // User not in the database
+                targetSocket = this.socket;
+                forwardMessage.setMessageType(MessageType.MESSAGE_CLIENT_NO_EXIST);
+                forwardMessage.setGetter(message.getGetter());
+            }
+            oos = new ObjectOutputStream(targetSocket.getOutputStream());
+            oos.writeObject(forwardMessage);
+        }
+    }
+
+    public Socket getSocket() {
+        return socket;
+    }
+}
