@@ -40,9 +40,9 @@ public class UserClientService {
             //Send the user with oos
             oos.writeObject(user);
             ois = new ObjectInputStream(socket.getInputStream());
-            //对面会将消息封装为一个Message对象
+            
             Message message = (Message) ois.readObject();
-            //此时登录成功
+            //login success
             if (message.getMessageType().equals(MessageType.MESSAGE_LOGIN_SUCCESS)) {
                 ClientConnectServerThread thread = new ClientConnectServerThread(socket, userId);
                 thread.start();
@@ -84,42 +84,20 @@ public class UserClientService {
 
     //Send private message with other user
     public void Send(String name, String contents) {
+
         try {
-<<<<<<< HEAD
-            Message message1 = new Message();
-            message1.setMessageType(MessageType.MESSAGE_COMM_MES);//This is a common message
-            message1.setGetter(name);//receiver of the message
-            message1.setContent(contents);
-            message1.setSender(user.getUserId());
-            message1.setSendTime(formatTime());
-            oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(message1);
-=======
-            UserInterfaceFrame instance = UserInterfaceFrame.getInstance();
-            User currentUser = instance.getCurrentUser();
-            ConcurrentHashMap<String, User> users = instance.getUsers();
-            System.out.println("Try this");
-            System.out.println(currentUser.getBlockedUsers());
-            User recipientUsers = users.get(name);
-            System.out.println("The block list of the message receiver:");
-            System.out.println(recipientUsers.getBlockedUsers());
-            if (recipientUsers.isBlockedBy(currentUser.getUsername())){
-                System.out.println("Blocked");
-            }else {
                 Message message1 = new Message();
-                message1.setMessageType(MessageType.MESSAGE_COMM_MES);//This is a common message
+                message1.setMessageType(MessageType.MESSAGE_COMM_MES);//This si a common message
                 message1.setGetter(name);//receiver
                 message1.setContent(contents);
                 message1.setSender(user.getUserId());
                 message1.setSendTime(formatTime());
                 oos = new ObjectOutputStream(socket.getOutputStream());
                 oos.writeObject(message1);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
->>>>>>> b3fbe81551c82484992097fdbd41c2e2a42e30c4
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void sendAll(String contents) {
