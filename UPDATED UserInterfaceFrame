@@ -1,0 +1,113 @@
+package UI;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+import client.service.UserClientService;
+import common.User;
+import util.FileUtil;
+import util.FrameUtil;
+
+public class UserInterfaceFrame {
+    private JPanel panel1;
+    private JButton sendBtn, setPicButton, addButton, removeFriendButton, blockButton, toBlockListButton, sendAllBtn, refreshButton, deleteMsgButton;
+    private JLabel uNameLab, uImgLab, fName, fImgLab, fImg2, fName2;
+    private JTextArea chatMsg, textMsg, allChatMsg, textAllMsg;
+    private JTable table1;
+    private JFrame frame;
+    private StringBuffer strBuf = new StringBuffer();
+    private StringBuffer strAllBuf = new StringBuffer();
+    private ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
+    private Set<String> userNameSets = new HashSet<>();
+    private User currentUser;
+    private UserClientService userClientService;
+    private CustomModel mod;
+
+    private UserInterfaceFrame() {
+        setupButtons();
+        setupFrame();
+    }
+
+    private void setupButtons() {
+        addButton.addActionListener(e -> new UserListFrame(users, currentUser));
+        toBlockListButton.addActionListener(e -> new BlockListFrame(users, currentUser));
+        refreshButton.addActionListener(e -> users = FileUtil.getUsers());
+
+        deleteMsgButton = new JButton("Delete Message");
+        deleteMsgButton.addActionListener(e -> {
+            String selectedUser = JOptionPane.showInputDialog(frame, "Enter the user ID for message deletion:");
+            if (selectedUser != null && !selectedUser.isEmpty()) {
+                // Simulating message deletion logic
+                JOptionPane.showMessageDialog(frame, "Delete message request sent for user: " + selectedUser);
+            }
+        });
+    }
+
+    private void setupFrame() {
+        frame = new JFrame("User Interface Frame");
+        frame.setContentPane(panel1);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 500);
+        frame.setVisible(true);
+        FrameUtil.center(frame);
+
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                userClientService.closedComm();
+            }
+        });
+    }
+
+    public void init(User currentUser, ConcurrentHashMap<String, User> list, UserClientService userClientService) {
+        this.userClientService = userClientService;
+        this.users = list;
+        this.currentUser = currentUser;
+
+        mod = new CustomModel();
+        Arrays.stream(name).forEach(mod::addColumn);
+        init(mod, users);
+        table1.setModel(mod);
+        table1.setRowHeight(80);
+
+        uImgLab.setIcon(currentUser.getBio());
+        uNameLab.setText(currentUser.getUsername());
+
+        panel1.add(deleteMsgButton);  
+    }
+
+    private void init(CustomModel mod, Map<String, User> users) {
+        userNameSets.clear();
+        int i = 0;
+        Object[][] a = new Object[users.size()][3];
+        mod.setRowCount(0);
+        currentUser.getFriends().forEach(friend -> {
+            a[i][0] = false;
+            a[i][1] = users.get(friend).getBio();
+            a[i][2] = users.get(friend).getUsername();
+            mod.addRow(a[i++]);
+        });
+    }
+
+    class CustomModel extends DefaultTableModel {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return column == 0;
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            return getValueAt(0, columnIndex).getClass();
+        }
+    }
+
+    public static UserInterfaceFrame getInstance() {
+        return new UserInterfaceFrame();
+    }
+}
