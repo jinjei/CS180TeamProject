@@ -7,36 +7,25 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import common.Message;
-import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Team Project(Project 05) -- ManageServerConnectClientThread
- * <p>
- * This class manage thread
- *
- * @author Lab01, Team 4
- * @version Apr 10, 2024
- */
 public class ManageServerConnectClientThread {
     public static ConcurrentHashMap<String, ServerConnectClientThread> map = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<String, Vector<Message>> messageMap = new ConcurrentHashMap<>();
 
-    public static void deleteMessage(String userId, Message message) {
+    public static boolean deleteMessage(String userId, Message message) {
         Vector<Message> messages = messageMap.get(userId);
         if (messages != null) {
-            messages.remove(message);  // Remove the specified message
+            return messages.removeIf(m -> m.getId().equals(message.getId()));
         }
+        return false;
     }
     public static String getOnlineFriends() {
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<String, ServerConnectClientThread> entry : map.entrySet()) {
-            builder.append(entry.getKey() + " ");
+            builder.append(entry.getKey()).append(" ");
         }
-        return builder.toString();
+        return builder.toString().trim();
     }
-
     public static Socket getSocketById(String userId) {
         ServerConnectClientThread thread = map.get(userId);
         if (thread == null) {
@@ -45,62 +34,45 @@ public class ManageServerConnectClientThread {
             return thread.getSocket();
         }
     }
-
-    //Send a message to all connected clients except the message originator himself
-    public static void sendAll(Socket socket, ObjectOutputStream oos, Message message) {
-        try {
-            for (Map.Entry<String, ServerConnectClientThread> entry : map.entrySet()) {
-                Socket socket1 = getSocketById(entry.getKey());
-                if (socket1 != socket) {
-                    //Check whether the currently traversed socket is the message sender
-                    oos = new ObjectOutputStream(socket1.getOutputStream());
+   public static void sendAll(Socket socket, Message message) {
+        map.forEach((userId, thread) -> {
+            if (thread.getSocket() != socket) {
+                try {
+                    ObjectOutputStream oos = new ObjectOutputStream(thread.getSocket().getOutputStream());
                     oos.writeObject(message);
+                } catch (IOException e) {
+                    System.err.println("Error sending message to all: " + e.getMessage());
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        });
     }
-
-    //The server temporarily stores offline messages; userID: receiver; message: the message needs to be stored
     public static void addMessage(String userId, Message message) {
-        Vector<Message> vector = messageMap.get(userId);
-        if (vector == null) {
-            vector = new Vector<>();
-            messageMap.put(userId, vector);
-        }
-        vector.add(message);
+        messageMap.computeIfAbsent(userId, k -> new Vector<>()).add(message);
     }
-
-    //Send the server inventory(pending) message; userId: receiver
-    public static void sendOffLineMessage(String userId, ObjectOutputStream oos) {
-        Vector<Message> vector = messageMap.get(userId); //Get inventory message
-        if (!(vector == null || vector.isEmpty())) {
+    public static void sendOffLineMessage(String userId) {
+        Vector<Message> messages = messageMap.get(userId);
+        if (messages != null && !messages.isEmpty()) {
             try {
-                //Indicate that the current user has pending messages to send
                 Socket socket = getSocketById(userId);
-                while (!vector.isEmpty()) {
-                    Message message = vector.get(0);
-                    //Send messages in order
-                    oos = new ObjectOutputStream(socket.getOutputStream());
-                    oos.writeObject(message);
-                    vector.remove(message);
-                }
+                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                messages.forEach(message -> {
+                    try {
+                        oos.writeObject(message);
+                    } catch (IOException e) {
+                        System.err.println("Error sending offline messages: " + e.getMessage());
+                    }
+                });
+                messages.clear();
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Failed to send offline messages for " + userId + ": " + e.getMessage());
             }
         }
-    }
-
-    public static ConcurrentHashMap<String, ServerConnectClientThread> getMap() {
-        return map;
     }
 
     public static void deleteSocket(String userId) {
         map.remove(userId);
     }
-
-    public static void addThread(String useId, ServerConnectClientThread thread) {
-        map.put(useId, thread);
+    public static void addThread(String userId, ServerConnectClientThread thread) {
+        map.put(userId, thread);
     }
 }
