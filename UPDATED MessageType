@@ -9,5 +9,8 @@ public interface MessageType {
     String MESSAGE_CLIENT_EXIT = "6";
     String MESSAGE_CLIENT_NO_EXIST = "7";
     String MESSAGE_CLIENT_OFFLINE = "8";
-    String MESSAGE_DELETE_MES = "9"; 
+    String MESSAGE_DELETE_MES = "9";
+    String MESSAGE_DELETE_SUCCESS = "10"; // successful message deletion
+    String MESSAGE_DELETE_FAIL = "11";    // failed message deletion
+    String MESSAGE_ERROR = "12";          // for error message
 }
