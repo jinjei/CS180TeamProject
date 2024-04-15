@@ -26,6 +26,7 @@ Our project features a complex directory structure that is not executable within
 ### Messaging System
 - **Direct Messaging**: Fully implemented feature allowing users to send private messages to other users.
 - **Unique "Send All"**: Users can send messages to all users of the application, similar to public notifications. This feature was implemented as an innovative addition beyond the project requirements.
+- **Messages to Offline User**: We have also implemented the functionality to send messages to offline users. These pending messages will be temporarily stored and, once the recipient logs in, they will see the message in their respective window.
 
   
 ## Extra Credit Features
