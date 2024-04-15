@@ -2,6 +2,10 @@
 
 # Project Documentation
 
+## Important Note
+Our project features a complex directory structure that is not executable within the Vocareum platform. For proper functionality and to experience all features of our application, it is necessary to run the project locally by downloading the code from our GitHub repository. To get started, you need to clone the repository from GitHub to your local machine.
+[Visit our GitHub repository](https://github.com/jinjei/CS180TeamProject.git)
+
 ## Features Implemented
 
 ### User Registration and Authentication
@@ -19,6 +23,11 @@
 ### Data Persistence
 - Ensures that all user data, including registration information, friend lists, and block lists, are maintained between sessions without loss.
 
+### Messaging System
+- **Direct Messaging**: Fully implemented feature allowing users to send private messages to other users.
+- **Unique "Send All"**: Users can send messages to all users of the application, similar to public notifications. This feature was implemented as an innovative addition beyond the project requirements.
+
+  
 ## Extra Credit Features
 
 ### User Profile Customization
@@ -26,9 +35,7 @@
 - **Display Profile Picture**: Each user's profile picture is displayed in their personal window upon login.
 - **Change Profile Picture**: Post-login, users can change their profile picture, adding a layer of ongoing customization to their profile.
 
-### Messaging System
-- **Direct Messaging**: Fully implemented feature allowing users to send private messages to other users.
-- **Unique "Send All"**: Users can send messages to all users of the application, similar to public notifications. This feature was implemented as an innovative addition beyond the project requirements.
+
 
 ## Usage Instructions
 To start the application, follow these steps:
@@ -50,6 +57,8 @@ The following classes are heavily focused on Java network I/O operations and non
   
 - **Chatroom Directory:**
   - `UserClientService`
+### Other Tests
+
 
 Thank you for understanding the unique testing challenges and considerations for these classes.
 
