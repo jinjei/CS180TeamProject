@@ -155,6 +155,43 @@ This class relies on:
 
 
 
+# User
+
+## Overview
+The `User` class is part of the Team Project for managing user data and interactions within a network application. It encapsulates all necessary user information and behaviors such as managing friendships, blocking other users, and handling user authentication and messaging functionalities.
+
+## Features
+- **User Management**: Handles user information such as username, password, email, and profile picture.
+- **Friend Management**: Supports adding and removing friends.
+- **Block Management**: Allows users to block and unblock other users.
+- **Authentication Support**: Assists in password verification processes (commented out in the example for potential future use).
+- **Profile Customization**: Users can update their profile pictures, enhancing personalization.
+
+## Class Methods
+- `setUsername(String username)`: Sets the username of the user.
+- `setUser(String name, String username, String password, String email)`: Sets the user's full details.
+- `addFriend(String friendUsername)`: Adds a new friend if not already added or blocked.
+- `removeFriend(String friendUsername)`: Removes a friend from the user's friend list.
+- `blockUser(String userToBlock)`: Blocks another user.
+- `unblockUser(String userToUnblock)`: Unblocks a previously blocked user.
+- `getBio()`: Returns the user's profile picture.
+- `setBio(ImageIcon bio)`: Sets the user's profile picture.
+
+## Serialization
+This class implements `Serializable`, allowing user instances to be saved and loaded from a file or sent over a network.
+
+## Usage Example
+Below is an example of how to create a `User` object, set user details, and manage friendships and blocks:
+
+```java
+User user = new User("username", "password");
+user.setUser("John Doe", "johndoe", "securepassword123", "johndoe@example.com");
+user.addFriend("janedoe");
+user.blockUser("foeuser");
+```
+
+
+
 # Message
 
 ## Overview
@@ -367,3 +404,49 @@ To utilize the centering functionality, simply pass your JFrame instance to the 
 - **User Authentication**: Validates usernames and passwords to ensure that only registered users can log in.
 - **Session Management**: Manages active user sessions through dedicated threads, allowing simultaneous and responsive interactions for multiple users.
 - **Offline Messaging**: Temporarily stores messages intended for offline users and delivers them once the user reconnects.
+
+
+
+# ManageServerConnectClientThread
+
+## Overview
+`ManageServerConnectClientThread` is a central management class in the server module of the Team Project. It handles the mapping of client threads to user IDs, manages sending and storing messages, and tracks online users. This class is critical for the functionality of a networked chat application, ensuring that messages are routed correctly and efficiently.
+
+## Features
+- **Connection Management**: Tracks all active server threads for connected clients and their associated user IDs.
+- **Message Routing**: Facilitates sending messages to all connected clients or specific users, including support for broadcasting messages to multiple users.
+- **Offline Message Handling**: Temporarily stores messages intended for users who are currently offline, delivering them when the user reconnects.
+- **Online User Tracking**: Provides a method to retrieve a list of all currently online users.
+
+## Methods
+- `getOnlineFriends()`: Returns a string listing all users currently online.
+- `getSocketById(String userId)`: Retrieves the `Socket` associated with a given user ID.
+- `sendAll(Socket socket, ObjectOutputStream oos, Message message)`: Sends a message to all connected users except the sender.
+- `addMessage(String userId, Message message)`: Stores a message intended for a user who is currently offline.
+- `sendOffLineMessage(String userId, ObjectOutputStream oos)`: Sends stored messages to a user when they reconnect.
+- `deleteSocket(String userId)`: Removes a user and their server thread from the management map.
+- `addThread(String userId, ServerConnectClientThread thread)`: Adds a new server thread associated with a user ID to the management map.
+
+## Usage
+This class is utilized within the server-side application to manage connections and message flows between clients. It is not instantiated directly but supports the server operations by providing static methods that handle various aspects of connection and message management.
+
+
+
+# ServerConnectClientThread
+
+## Overview
+`ServerConnectClientThread` is a class within the server module of the Team Project that handles the communication between the server and individual clients. This class is responsible for processing all client-server interactions for a specific client once they are connected.
+
+## Features
+- **Connection Handling**: Manages the socket connection for a specific client, ensuring messages are received and sent properly.
+- **Message Routing**: Processes incoming messages and takes appropriate actions based on the message type, such as sending user lists, broadcasting messages, and handling direct messages.
+- **Session Management**: Maintains the session for a user until they disconnect, and ensures proper cleanup of resources upon disconnection.
+
+## Methods
+- `run()`: Continuously listens for messages from the connected client and processes them.
+- `actionByMessageType(Message message)`: Determines the action to take based on the type of message received.
+- `getSocket()`: Returns the socket associated with the current client.
+
+## Usage
+This class is instantiated when a new client connects to the server. It then takes over handling all messages from that client, allowing for asynchronous communication between the server and multiple clients at once.
+
