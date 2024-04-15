@@ -23,6 +23,9 @@ Our project features a complex directory structure that is not executable within
 ### Data Persistence
 - Ensures that all user data, including registration information, friend lists, and block lists, are maintained between sessions without loss.
 
+### Thread Safety
+- **Concurrency HashMap**: We use Concurrency HashMap as the user database to ensure thread safety.
+
 ### Messaging System
 - **Direct Messaging**: Fully implemented feature allowing users to send private messages to other users.
 - **Unique "Send All"**: Users can send messages to all users of the application, similar to public notifications. This feature was implemented as an innovative addition beyond the project requirements.
@@ -58,8 +61,10 @@ The following classes are heavily focused on Java network I/O operations and non
   
 - **Chatroom Directory:**
   - `UserClientService`
+  - `ClientConnectServerThread`
 ### Other Tests
-
+- `UserTest`：Run the UserTest, and if the tests pass successfully, the following messages will be printed to the console: "blockUser has been blocked.", "blockUser has been unblocked.", "friendUser has been added to your friends list.", "Excellent - Test ran successfully."
+- `MessageTest`：Run the MessageTest, and if tests pass successfully, the following messages will be printed to the console: "Excellent - Test ran successfully."
 
 Thank you for understanding the unique testing challenges and considerations for these classes.
 
@@ -329,3 +334,12 @@ The `FrameUtil` class provides utility functions for managing JFrame properties 
 To utilize the centering functionality, simply pass your JFrame instance to the `center` method. This method adjusts the JFrame's position and size if necessary, ensuring it appears centered and within the screen's bounds.
 
 
+
+# AppServer
+`AppServer` is the core server-side component of our networked application. It listens on port 9999 and handles incoming client connections continuously. For each client, it authenticates user credentials and, upon successful authentication, starts a dedicated thread (`ServerConnectClientThread`) to manage further communications with the client.
+
+## Features
+
+- **User Authentication**: Validates usernames and passwords to ensure that only registered users can log in.
+- **Session Management**: Manages active user sessions through dedicated threads, allowing simultaneous and responsive interactions for multiple users.
+- **Offline Messaging**: Temporarily stores messages intended for offline users and delivers them once the user reconnects.
