@@ -1,4 +1,61 @@
-# CS180TeamProject
+# CS180TeamProject - Community Bulletin Board
+
+# Project Documentation
+
+## Features Implemented
+
+### User Registration and Authentication
+- **User Registration**: Users can register by providing their credentials, which are securely stored for future sessions.
+- **Password Protected Login**: Ensures that user logins are secure and authenticated against stored credentials.
+
+### Friend Management
+- **Add Friends**: Users can add other users to their friend list.
+- **Remove Friends**: Users have the option to remove friends from their friend list.
+
+### User Blocking
+- **Block User**: Users can block other users, preventing them from interacting or viewing their information.
+- **Unblock User**: Users can unblock previously blocked users.
+
+### Data Persistence
+- Ensures that all user data, including registration information, friend lists, and block lists, are maintained between sessions without loss.
+
+## Extra Credit Features
+
+### User Profile Customization
+- **Profile Picture Upload at Registration**: Users can upload their profile picture during the registration process, enhancing personalization.
+- **Display Profile Picture**: Each user's profile picture is displayed in their personal window upon login.
+- **Change Profile Picture**: Post-login, users can change their profile picture, adding a layer of ongoing customization to their profile.
+
+### Messaging System
+- **Direct Messaging**: Fully implemented feature allowing users to send private messages to other users.
+- **Unique "Send All"**: Users can send messages to all users of the application, similar to public notifications. This feature was implemented as an innovative addition beyond the project requirements.
+
+## Usage Instructions
+To start the application, follow these steps:
+1. **Start the Server**: Navigate to the `server` directory and run the `AppServer.java`.
+2. **Launch Client Application**: In the `chatroom` directory, execute `UserClientService.java` to open the user interface.
+3. **Register/Login**: Use the interface to register a new account or log in with existing credentials.
+4. **Explore Features**: Creating mulyiple identical LoginFrame to run multiple users at same time. Utilize the user interface to explore the functionalities such as adding friends, blocking users, and sending messages.
+
+## Conclusion
+This project aims to provide a robust and user-friendly platform for secure communication and social interaction among users. The additional features for profile customization and community messaging enhance the overall user experience and functionality of the application.
+
+## Important Note on Testing Strategy
+
+### Network I/O Classes
+The following classes are heavily focused on Java network I/O operations and none of them contain constructors., according to the handout, we did not write JUnit Test for these classes. The testing/grading strategy should focus on integration and system-level testing. We assess the functionality of these classes through the overall application behavior during runtime.
+- **Server Directory:**
+  - `ServerConnectClientThread`
+  - `ManageServerConnectClientThread`
+  
+- **Chatroom Directory:**
+  - `UserClientService`
+
+Thank you for understanding the unique testing challenges and considerations for these classes.
+
+
+
+
 # Run/Test instructions
 There are two folders in CommunityBulletinBoard, one is "server", containing all the server-related code; the other is "chatroom", mainly for the client side, including the user fields, various GUI interfaces, etc. 
 
