@@ -26,10 +26,10 @@ public class LoginFrame {
         FrameUtil.center(frame);
 
         // Aesthetic adjustments
-        Color lightGrey = new Color(245, 245, 245);  // Light grey background
-        Color pastelBlue = new Color(173, 216, 230);  // Lighter blue for Login
-        Color pastelGreen = new Color(144, 238, 144);  // Lighter green for Register
-        Font labelFont = new Font("Sans Serif", Font.BOLD, 16);  // Smaller font for labels and buttons
+        Color lightGrey = new Color(245, 245, 245);  
+        Color pastelBlue = new Color(173, 216, 230);  
+        Color pastelGreen = new Color(144, 238, 144);  
+        Font labelFont = new Font("Sans Serif", Font.BOLD, 16);  
 
         frame.getContentPane().setBackground(lightGrey);
 
@@ -52,7 +52,7 @@ public class LoginFrame {
 
         // Layout management using GridBagConstraints
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(4, 4, 4, 4);  // Reduced margins
+        gbc.insets = new Insets(4, 4, 4, 4);  
         gbc.gridx = 0;
         gbc.gridy = 0;
         frame.add(usernameLabel, gbc);
