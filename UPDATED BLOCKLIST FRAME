@@ -1,0 +1,124 @@
+package UI;
+
+import common.User;
+import util.FileUtil;
+import util.FrameUtil;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * A frame used for displaying and managing a user's block list in a chat application.
+ *
+ * <p>This frame provides functionalities to view and manage users that are currently blocked by the user.
+ * Users can be unblocked using the interface provided by this frame.</p>
+ */
+
+public class BlockListFrame {
+    private JPanel root;
+    private JButton removeBtn;
+    private JTable table1;
+
+    private Object[][] userData;
+    private final Object[] columnNames = {"", "Icon", "Username"};
+    private Set<String> selectedUsernames = new HashSet<>();
+    private User currentUser;
+    private JFrame frame;
+    private ConcurrentHashMap<String, User> users;
+
+    public void init(CustomModel model, ConcurrentHashMap<String, User> users) {
+        model.setRowCount(0);
+        userData = new Object[users.size()][3];
+        int i = 0;
+        for (String key : currentUser.getBlockedUsers()) {
+            User user = users.get(key);
+            if (user != null) {
+                userData[i][0] = Boolean.FALSE;
+                userData[i][1] = user.getBio();
+                userData[i][2] = user.getUsername();
+                model.addRow(userData[i]);
+                i++;
+            }
+        }
+    }
+
+    class CustomModel extends DefaultTableModel {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            if (column == 0) {
+                String username = table1.getValueAt(row, 2).toString();
+                if (Boolean.parseBoolean(table1.getValueAt(row, column).toString())) {
+                    selectedUsernames.add(username);
+                } else {
+                    selectedUsernames.remove(username);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            return getValueAt(0, columnIndex).getClass();
+        }
+    }
+
+    public BlockListFrame(ConcurrentHashMap<String, User> users, User user) {
+        this.users = users;
+        this.currentUser = user;
+        setupFrame();
+        CustomModel model = new CustomModel();
+        setupTable(model);
+        setupListeners(model);
+    }
+
+    private void setupFrame() {
+        frame = new JFrame("BlockList");
+        frame.setContentPane(this.root);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(500, 300);
+        FrameUtil.center(frame);
+        frame.setVisible(true);
+    }
+
+    private void setupTable(CustomModel model) {
+        for (Object column : columnNames) {
+            model.addColumn(column);
+        }
+        init(model, users);
+        table1.setModel(model);
+        table1.setRowHeight(80);
+    }
+
+    private void setupListeners(CustomModel model) {
+        removeBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleRemoveButton(model);
+            }
+        });
+    }
+
+    private void handleRemoveButton(CustomModel model) {
+        if (selectedUsernames.isEmpty()) {
+            JOptionPane.showMessageDialog(root, "Please select one person!");
+        } else if (selectedUsernames.size() > 1) {
+            JOptionPane.showMessageDialog(root, "Only one can be removed at a time!");
+        } else {
+            selectedUsernames.forEach(this::unblockUser);
+        }
+    }
+
+    private void unblockUser(String username) {
+        currentUser.unblockUser(username);
+        JOptionPane.showMessageDialog(root, "User " + username + " has been unblocked.");
+        users = FileUtil.getUsers(); 
+        UserInterfaceFrame.getInstance().flush();
+        init(new CustomModel(), users);
+    }
+}
