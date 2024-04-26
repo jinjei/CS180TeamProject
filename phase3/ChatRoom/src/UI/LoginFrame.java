@@ -25,7 +25,6 @@ public class LoginFrame {
         frame.setLayout(new GridBagLayout());
         FrameUtil.center(frame);
 
-        // Aesthetic adjustments
         Color lightGrey = new Color(245, 245, 245);
         Color pastelBlue = new Color(173, 216, 230);
         Color pastelGreen = new Color(144, 238, 144);
@@ -33,7 +32,6 @@ public class LoginFrame {
 
         frame.getContentPane().setBackground(lightGrey);
 
-        // Components setup
         JLabel usernameLabel = new JLabel("Username:");
         usernameLabel.setFont(labelFont);
         JTextField usernameField = new JTextField(15);
@@ -50,7 +48,6 @@ public class LoginFrame {
         JButton registerButton = new JButton("Register");
         styleButton(registerButton, pastelGreen, labelFont);
 
-        // Layout management using GridBagConstraints
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(4, 4, 4, 4);
         gbc.gridx = 0;
