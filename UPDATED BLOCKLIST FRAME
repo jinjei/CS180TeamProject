@@ -45,27 +45,26 @@ public class BlockListFrame {
 
     class CustomModel extends DefaultTableModel {
 
-        @Override
         public boolean isCellEditable(int row, int column) {
             if (column > 0) {
+                System.out.println("1");
                 return false;
             } else {
-                String selectionState = table1.getValueAt(row, column).toString();
-                String username = table1.getValueAt(row, 2).toString();
-                if (Boolean.parseBoolean(selectionState)) {
-                    userNameSets.add(username);
+                if (table1.getValueAt(row, column).toString().equalsIgnoreCase("false")) {
+                    System.out.println("Selected" + table1.getValueAt(row, 2));
+                    userNameSets.add(table1.getValueAt(row, 2).toString());
                 } else {
-                    userNameSets.remove(username);
+                    System.out.println("Cancelled" + table1.getValueAt(row, 2).toString());
+                    userNameSets.remove(table1.getValueAt(row, 2).toString());
                 }
                 return true;
             }
         }
-
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return getValueAt(0, columnIndex).getClass();
+        public Class getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
         }
     }
+
     public BlockListFrame(ConcurrentHashMap<String, User> users, User user) {
         this.users = users;
         this.currentUser = user;
