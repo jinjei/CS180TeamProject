@@ -18,112 +18,96 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>This frame provides functionalities to view and manage users that are currently blocked by the user.
  * Users can be unblocked using the interface provided by this frame.</p>
  */
-
 public class BlockListFrame {
     private JPanel root;
     private JButton removeBtn;
     private JTable table1;
 
-    private Object[][] userData;
-    private final Object[] columnNames = {"", "Icon", "Username"};
-    private Set<String> selectedUsernames = new HashSet<>();
+    private Object[][] a;
+    private final Object[] name = {"", "Icon", "Username"};
+    private Set<String> userNameSets = new HashSet<>();
     private User currentUser;
     private JFrame frame;
     private ConcurrentHashMap<String, User> users;
 
-    public BlockListFrame(ConcurrentHashMap<String, User> users, User user) {
-        this.users = users;
-        this.currentUser = user;
-        setupFrame();
-        CustomModel model = new CustomModel();
-        setupTable(model);
-        setupListeners(model);
-    }
-
-    private void setupFrame() {
-        frame = new JFrame("BlockList");
-        frame.setContentPane(this.root);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(500, 300);
-        FrameUtil.center(frame);
-        frame.setVisible(true);
-    }
-
-    private void setupTable(CustomModel model) {
-        for (Object column : columnNames) {
-            model.addColumn(column);
-        }
-        init(model, users);
-        table1.setModel(model);
-        table1.setRowHeight(80);
-    }
-
-    private void setupListeners(CustomModel model) {
-        removeBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleRemoveButton(model);
-            }
-        });
-    }
-
     public void init(CustomModel model, ConcurrentHashMap<String, User> users) {
+        a = new Object[users.size()][3];
         model.setRowCount(0);
-        userData = new Object[users.size()][3];
         int i = 0;
         for (String key : currentUser.getBlockedUsers()) {
-            User user = users.get(key);
-            if (user != null) {
-                userData[i][0] = Boolean.FALSE;
-                userData[i][1] = user.getBio();
-                userData[i][2] = user.getUsername();
-                model.addRow(userData[i]);
-                i++;
-            }
+            a[i][0] = Boolean.FALSE;
+            a[i][1] = users.get(key).getBio();
+            a[i][2] = users.get(key).getUsername();
+            model.addRow(a[i]);
+            i++;
         }
     }
 
     class CustomModel extends DefaultTableModel {
+
         @Override
         public boolean isCellEditable(int row, int column) {
-            return column == 0; // Only the checkbox column should be editable
+            if (column > 0) {
+                return false;
+            } else {
+                String selectionState = table1.getValueAt(row, column).toString();
+                String username = table1.getValueAt(row, 2).toString();
+                if (Boolean.parseBoolean(selectionState)) {
+                    userNameSets.add(username);
+                } else {
+                    userNameSets.remove(username);
+                }
+                return true;
+            }
         }
 
         @Override
         public Class<?> getColumnClass(int columnIndex) {
             return getValueAt(0, columnIndex).getClass();
         }
+    }
+    public BlockListFrame(ConcurrentHashMap<String, User> users, User user) {
+        this.users = users;
+        this.currentUser = user;
+        frame = new JFrame("BlockList");
+        frame.setContentPane(this.root);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(500, 300);
+        FrameUtil.center(frame);
+        frame.setVisible(true);
 
-        @Override
-        public void setValueAt(Object aValue, int row, int column) {
-            super.setValueAt(aValue, row, column);
-            if (column == 0) {
-                String username = (String) getValueAt(row, 2);
-                if ((Boolean) aValue) {
-                    selectedUsernames.add(username);
-                } else {
-                    selectedUsernames.remove(username);
-                }
+        CustomModel model = new CustomModel();
+        for (Object o : name) {
+            model.addColumn(o);
+        }
+        init(model, users);
+        table1.setModel(model);
+        table1.setRowHeight(80);
+
+        removeBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleRemoveAction(model);
+            }
+        });
+    }
+    private void handleRemoveAction(CustomModel model) {
+        if (userNameSets.isEmpty()) {
+            JOptionPane.showMessageDialog(root, "Please select one person!");
+        } else if (userNameSets.size() > 1) {
+            JOptionPane.showMessageDialog(root, "Only one can be removed at a time!");
+        } else {
+            for (String name : userNameSets) {
+                setUsers();
+                currentUser.unblockUser(name);
+                JOptionPane.showMessageDialog(root, "User unblocked: " + name);
+                FileUtil.setUser(users);
+                UserInterfaceFrame.getInstance().flush();
+                init(model, users);
             }
         }
     }
-
-    private void handleRemoveButton(CustomModel model) {
-        if (selectedUsernames.isEmpty()) {
-            JOptionPane.showMessageDialog(root, "Please select at least one person");
-        } else {
-            selectedUsernames.forEach(username -> {
-                currentUser.unblockUser(username);
-                JOptionPane.showMessageDialog(root, "User " + username + " has been unblocked.");
-            });
-            refreshData(model);
-            selectedUsernames.clear();
-        }
-    }
-
-    private void refreshData(CustomModel model) {
-        users = FileUtil.getUsers();
-        UserInterfaceFrame.getInstance().flush();
-        init(model, users);
+    public void setUsers() {
+        this.users = FileUtil.getUsers();
     }
 }
