@@ -72,7 +72,7 @@ public class ManageServerConnectClientThread implements ManageServerInterface {
             FileOutputStream fos = new FileOutputStream(f,true);
             PrintWriter pw = new PrintWriter(fos);
 
-            pw.println(STR."\{message.getSender()};\{message.getGetter()};\{message.getContent()};\{message.getSendTime()}");
+            pw.println(message.getSender() + ";" + message.getGetter() + ";" + message.getContent() + ";" + message.getSendTime());
 
             pw.close();
 
