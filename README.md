@@ -1,4 +1,4 @@
-# CS180TeamProject - Community Bulletin Board
+# CS180TeamProject - Bulletin! 
 
 # Project Documentation
 
