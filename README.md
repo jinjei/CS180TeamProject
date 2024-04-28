@@ -72,7 +72,7 @@ Thank you for understanding the unique testing challenges and considerations for
 
 
 # Run/Test instructions
-There are two folders in CommunityBulletinBoard, one is "server", containing all the server-related code; the other is "chatroom", mainly for the client side, including the user fields, various GUI interfaces, etc. 
+There are two folders in Phase3FinalVersion, one is "server", containing all the server-related code; the other is "chatroom", mainly for the client side, including the user fields, various GUI interfaces, etc. 
 
 **Step 1:** Download both folders, and open one with IntelliJ, taking "server" as an example. **After opening the “server”, select: File-Open to open the chatroom project**. 
 
