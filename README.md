@@ -85,6 +85,12 @@ There are two folders in Phase3FinalVersion, one is "server", containing all the
 
 After completing all the tasks mentioned above, you can now begin running the project. First, open the server folder, find the main package, and **run the AppServer class** inside it to start the server side of the project. Then, switch to the Chatroom folder, locate the UI package, which contains the LoginFrame class with a main function that you can run. This is the first GUI interface for client users to log in or register. From here, you can explore all other features of the project. **Run the main method of LoginFrame**, follow the prompts to register the project's first user, and then log in using the username and password you just entered during registration. The next step is to enable multiple users to log in simultaneously, experiencing multi-threaded access to the server side, sending private messages between two users, and sending messages to all users of the BulletBoardApp. **To create more users**(Concurrency and multithreading), stay in the Chatroom folder’s LoginFrame, click on **Run - Edit Configurations** in IntelliJ, and a window titled Run/Debug Configurations will pop up. In the upper left corner, there are several options: Add New Configuration, Remove Configuration, and Copy Configuration. **Select "Copy Configuration" to duplicate the current LoginFrame**. If you want to enable 'n' number of users to log in simultaneously, copy the LoginFrame 'n' times, with each user using a different LoginFrame.
 
+# Submissions
+
+**Jiaxu Jin** Submitted Project Code to Vocareum and Github. Also submitted Presentation Video to Brightspace.
+
+**Anvesha Nain** Submitted Project Report to Brightspace. 
+
 
 # Method Tests by Class
 
