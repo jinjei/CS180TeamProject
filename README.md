@@ -87,7 +87,8 @@ After completing all the tasks mentioned above, you can now begin running the pr
 
 # Submissions
 **Jiaxu Jin** Submitted Project Code to Vocareum and Github. Also submitted Presentation Video to Brightspace.
-**Anvesha Nain** - Submitted Presentation Report to Brightspace. 
+
+**Anvesha Nain** Submitted Presentation Report to Brightspace. 
 
 # Method Tests by Class
 
